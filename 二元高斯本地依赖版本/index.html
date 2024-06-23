@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bivariate Normal Distribution</title>
+    <!-- 本地加载 Math.js 和 Plotly.js -->
+    <script src="libs/math.js"></script>
+    <script src="libs/plotly-2.32.0.min.js"></script>
+</head>
+<body>
+    <div>
+        <label for="meanX">Mean X:</label>
+        <input type="number" id="meanX" value="0">
+        <label for="meanY">Mean Y:</label>
+        <input type="number" id="meanY" value="0">
+        <label for="stdX">Std X:</label>
+        <input type="number" id="stdX" value="1">
+        <label for="stdY">Std Y:</label>
+        <input type="number" id="stdY" value="1">
+        <label for="rho">Rho:</label>
+        <input type="number" id="rho" step="0.1" value="0.5">
+        <button onclick="updatePlot()">Update Plot</button>
+        <p id="message" style="color: red;"></p>
+    </div>
+    <div id="plot" style="width: 100%; height: 90vh;"></div>
+    <script src="script.js"></script>
+</body>
+</html>
+
