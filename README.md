@@ -1,4 +1,4 @@
-#Quantitative_finance_public_repo
+# Quantitative_finance_public_repo
 
 public download resources of quantitative finance
 
