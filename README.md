@@ -1,5 +1,6 @@
-# GD_public_repo
-public download resources for GD
+#Quantitative_finance_public_repo
+
+public download resources of quantitative finance
 
 png 静态图
 

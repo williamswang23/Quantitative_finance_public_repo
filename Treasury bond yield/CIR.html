@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cox-Ingersoll-Ross (CIR) Model</title>
+    <script src="libs/chart.min.js"></script>
+</head>
+<body>
+    <h2>Cox-Ingersoll-Ross (CIR) Model Interest Rate Path</h2>
+    <form id="cirForm">
+        <label for="r0">Initial Rate (r0):</label>
+        <input type="number" id="r0" step="0.01" required><br><br>
+        <label for="kappa">Speed of Reversion (κ):</label>
+        <input type="number" id="kappa" step="0.01" required><br><br>
+        <label for="theta">Long-term Mean Rate (θ):</label>
+        <input type="number" id="theta" step="0.01" required><br><br>
+        <label for="sigma">Volatility (σ):</label>
+        <input type="number" id="sigma" step="0.01" required><br><br>
+        <label for="T">Time Horizon (T in years):</label>
+        <input type="number" id="T" step="0.01" required><br><br>
+        <label for="n">Number of Time Steps (n):</label>
+        <input type="number" id="n" required><br><br>
+        <input type="button" value="Generate Path" onclick="generateCIRPath()">
+    </form>
+    <h3>Generated Interest Rate Path:</h3>
+    <canvas id="cirChart" width="800" height="400"></canvas>
+    
+    <script>
+        function generateCIRPath() {
+            let r0 = parseFloat(document.getElementById('r0').value);
+            let kappa = parseFloat(document.getElementById('kappa').value);
+            let theta = parseFloat(document.getElementById('theta').value);
+            let sigma = parseFloat(document.getElementById('sigma').value);
+            let T = parseFloat(document.getElementById('T').value);
+            let n = parseInt(document.getElementById('n').value);
+
+            let dt = T / n;
+            let rt = r0;
+            let rates = [rt];
+            let times = [0];
+
+            for (let i = 1; i <= n; i++) {
+                let dW = Math.sqrt(dt) * normalRandom();
+                rt = rt + kappa * (theta - rt) * dt + sigma * Math.sqrt(rt) * dW;
+                rates.push(rt);
+                times.push(i * dt);
+            }
+
+            plotCIRPath(times, rates);
+        }
+
+        function normalRandom() {
+            let u = 0, v = 0;
+            while(u === 0) u = Math.random();
+            while(v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+
+        function plotCIRPath(times, rates) {
+            const ctx = document.getElementById('cirChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: times,
+                    datasets: [{
+                        label: 'Interest Rate',
+                        data: rates,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'Time'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Interest Rate'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
