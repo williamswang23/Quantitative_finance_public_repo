@@ -82,7 +82,7 @@ function updatePlot() {
     }];
 
     const layout = {
-        title: `Bivariate Normal Distribution (rho=${rho}, std=${stdX}, ${stdY})`,
+        title: `Bivariate Normal Distribution (rho=${rho}, std=${stdX}, ${stdY}), by Williams.Wang`,
         scene: {
             xaxis: {title: 'X', range: [-axisRange, axisRange]},
             yaxis: {title: 'Y', range: [-axisRange, axisRange]},
