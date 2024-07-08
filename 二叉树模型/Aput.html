@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>American Put Option Calculator</title>
+    <meta name="author" content="williams.wang">
+    <script>
+        function discount(payoffu, payoffd, pu, pd, rf, T) {
+            return (pu * payoffu + pd * payoffd) * Math.exp(-rf * T);
+        }
+
+        function factor(sigma, T) {
+            let u = Math.exp(sigma * Math.sqrt(T));
+            let d = 1 / u;
+            return [u, d];
+        }
+
+        function rp(rf, T, u, d) {
+            let pu = (Math.exp(rf * T) - d) / (u - d);
+            let pd = 1 - pu;
+            return [pu, pd];
+        }
+
+        function SS(S, u, d) {
+            let su = S * u;
+            let sd = S * d;
+            return [su, sd];
+        }
+
+        function A_option(payoff, s, X) {
+            return Math.max(payoff, X - s);
+        }
+
+        function calculate() {
+            let X = parseFloat(document.getElementById("X").value).toFixed(4);
+            let T = parseFloat(document.getElementById("T").value).toFixed(4);
+            let rf = parseFloat(document.getElementById("rf").value).toFixed(4);
+            let sigma = parseFloat(document.getElementById("sigma").value).toFixed(4);
+            let S = parseFloat(document.getElementById("S").value).toFixed(4);
+
+            let [u, d] = factor(sigma, T);
+            let [pu, pd] = rp(rf, T, u, d);
+            let [su, sd] = SS(S, u, d);
+
+            let [suu, sud] = SS(su, u, d);
+            let [sud2, sdd] = SS(sd, u, d);
+
+            let puu = Math.max(X - suu, 0).toFixed(4);
+            let pud = Math.max(X - sud, 0).toFixed(4);
+            let pdd = Math.max(X - sdd, 0).toFixed(4);
+
+            let p1u = discount(puu, pud, pu, pd, rf, T).toFixed(4);
+            let p1d = discount(pud, pdd, pu, pd, rf, T).toFixed(4);
+
+            p1u = A_option(p1u, su, X).toFixed(4);
+            p1d = A_option(p1d, sd, X).toFixed(4);
+
+            let p0 = discount(p1u, p1d, pu, pd, rf, T).toFixed(4);
+            p0 = A_option(p0, S, X).toFixed(4);
+
+            document.getElementById("results").innerHTML = `
+                <p>u, d is ${parseFloat(u).toFixed(4)}, ${parseFloat(d).toFixed(4)}</p>
+                <p>piu, pid is ${parseFloat(pu).toFixed(4)}, ${parseFloat(pd).toFixed(4)}</p>
+                <p>su, sd is ${parseFloat(su).toFixed(4)}, ${parseFloat(sd).toFixed(4)}</p>
+                <p>suu, sud, sdd is ${parseFloat(suu).toFixed(4)}, ${parseFloat(sud).toFixed(4)}, ${parseFloat(sdd).toFixed(4)}</p>
+                <p>payoff_uu, payoff_ud, payoff_dd is ${puu}, ${pud}, ${pdd}</p>
+                <p>payoff_u, payoff_d is ${p1u}, ${p1d}</p>
+                <p>p0 is ${p0}</p>
+            `;
+        }
+    </script>
+</head>
+<body>
+    <h1>American Put Option Calculator</h1>
+    <p>Author: williams.wang</p>
+    <p>说明: 支持小数点后4位，所有参数都写成小数形式。</p>
+    <form onsubmit="event.preventDefault(); calculate();">
+        <label for="X">请输入欧式put期权的执行价格：</label>
+        <input type="number" step="0.0001" id="X" required><br>
+        <label for="T">请输入每一步的时间长度，单位为年：</label>
+        <input type="number" step="0.0001" id="T" required><br>
+        <label for="rf">请输入无风险利率，以小数的格式：</label>
+        <input type="number" step="0.0001" id="rf" required><br>
+        <label for="sigma">请输入年化波动率，以小数格式：</label>
+        <input type="number" step="0.0001" id="sigma" required><br>
+        <label for="S">请输入0时刻股票价格：</label>
+        <input type="number" step="0.0001" id="S" required><br>
+        <input type="submit" value="Calculate">
+    </form>
+    <div id="results"></div>
+</body>
+</html>
+
